@@ -1,5 +1,16 @@
+import GridWorkspace from './components/GridWorkspace'
+import ObjectLibrary from './components/ObjectLibrary'
+import './App.css'
+
 function App() {
-  return <h1>PowerGrid</h1>
+  return (
+    <div className="app">
+      <ObjectLibrary />
+      <main className="app-map">
+        <GridWorkspace />
+      </main>
+    </div>
+  )
 }
 
 export default App

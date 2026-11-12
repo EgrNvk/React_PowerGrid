@@ -1,0 +1,56 @@
+.object-library {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 260px;
+  flex-shrink: 0;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 12px;
+  overflow-y: auto;
+  background: #f4f4f4;
+  border-right: 1px solid #ccc;
+}
+
+.object-library ul {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.object-library .library-sub {
+  margin-left: 16px;
+}
+
+.library-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  text-align: left;
+}
+
+button.library-row {
+  cursor: pointer;
+}
+
+.library-row img {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+.library-chevron {
+  margin-left: auto;
+}
