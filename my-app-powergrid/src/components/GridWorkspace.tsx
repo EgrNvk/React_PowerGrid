@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { MouseEvent, ReactNode } from 'react'
+import type { MouseEvent, PointerEvent, ReactNode } from 'react'
 import './GridWorkspace.css'
 
 const FIELD_WIDTH = 2000
@@ -11,10 +11,17 @@ const ZOOM_STEP = 0.1
 
 type GridWorkspaceProps = {
   onFieldClick: (x: number, y: number) => void
+  onFieldPointerMove: (x: number, y: number) => void
+  onFieldPointerUp: () => void
   children?: ReactNode
 }
 
-function GridWorkspace({ onFieldClick, children }: GridWorkspaceProps) {
+function GridWorkspace({
+  onFieldClick,
+  onFieldPointerMove,
+  onFieldPointerUp,
+  children,
+}: GridWorkspaceProps) {
   const [zoom, setZoom] = useState(1)
 
   const changeZoom = (next: number) => {
@@ -22,11 +29,24 @@ function GridWorkspace({ onFieldClick, children }: GridWorkspaceProps) {
     setZoom(Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, rounded)))
   }
 
-  const handleClick = (event: MouseEvent<SVGSVGElement>) => {
+  const getFieldPoint = (event: MouseEvent<SVGSVGElement>) => {
     const rect = event.currentTarget.getBoundingClientRect()
     const x = Math.round(((event.clientX - rect.left) * FIELD_WIDTH) / rect.width)
     const y = Math.round(((event.clientY - rect.top) * FIELD_HEIGHT) / rect.height)
+    return {
+      x: Math.min(FIELD_WIDTH, Math.max(0, x)),
+      y: Math.min(FIELD_HEIGHT, Math.max(0, y)),
+    }
+  }
+
+  const handleClick = (event: MouseEvent<SVGSVGElement>) => {
+    const { x, y } = getFieldPoint(event)
     onFieldClick(x, y)
+  }
+
+  const handlePointerMove = (event: PointerEvent<SVGSVGElement>) => {
+    const { x, y } = getFieldPoint(event)
+    onFieldPointerMove(x, y)
   }
 
   return (
@@ -45,6 +65,8 @@ function GridWorkspace({ onFieldClick, children }: GridWorkspaceProps) {
           height={FIELD_HEIGHT * zoom}
           viewBox={`0 0 ${FIELD_WIDTH} ${FIELD_HEIGHT}`}
           onClick={handleClick}
+          onPointerMove={handlePointerMove}
+          onPointerUp={onFieldPointerUp}
         >
           <defs>
             <pattern
