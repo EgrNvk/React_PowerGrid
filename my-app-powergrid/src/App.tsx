@@ -2,8 +2,10 @@ import { useState } from 'react'
 import GridWorkspace from './components/GridWorkspace'
 import MapObject from './components/MapObject'
 import type { MapObjectData } from './components/MapObject'
+import NetworkStats from './components/NetworkStats'
 import ObjectLibrary from './components/ObjectLibrary'
 import type { DeleteMode, LibraryItem, LineType } from './components/ObjectLibrary'
+import ObjectProperties from './components/ObjectProperties'
 import PowerLine from './components/PowerLine'
 import type { PowerLineData } from './components/PowerLine'
 import './App.css'
@@ -23,13 +25,17 @@ function App() {
   const [objects, setObjects] = useState<MapObjectData[]>([])
   const [lines, setLines] = useState<PowerLineData[]>([])
   const [selectedObjectId, setSelectedObjectId] = useState<string | null>(null)
+  const [selectedPowerLineId, setSelectedPowerLineId] = useState<string | null>(null)
   const [draggingId, setDraggingId] = useState<string | null>(null)
+
+  const isSelectMode = selectedItem === null && selectedLineId === null && deleteMode === null
 
   const handleSelect = (item: LibraryItem) => {
     setSelectedItem(item.id === selectedItem?.id ? null : item)
     setSelectedLineId(null)
     setDeleteMode(null)
     setSelectedObjectId(null)
+    setSelectedPowerLineId(null)
   }
 
   const handleSelectLine = (id: string) => {
@@ -37,6 +43,7 @@ function App() {
     setSelectedItem(null)
     setDeleteMode(null)
     setSelectedObjectId(null)
+    setSelectedPowerLineId(null)
   }
 
   const handleSelectDelete = (mode: DeleteMode) => {
@@ -44,11 +51,13 @@ function App() {
     setSelectedItem(null)
     setSelectedLineId(null)
     setSelectedObjectId(null)
+    setSelectedPowerLineId(null)
   }
 
   const handleFieldClick = (x: number, y: number) => {
     if (!selectedItem) {
       setSelectedObjectId(null)
+      setSelectedPowerLineId(null)
       return
     }
     const newObject: MapObjectData = {
@@ -110,7 +119,17 @@ function App() {
       return
     }
     setSelectedObjectId(id)
+    setSelectedPowerLineId(null)
     setDraggingId(id)
+  }
+
+  const handlePowerLineClick = (id: string) => {
+    if (deleteMode === 'line') {
+      handleDeleteLine(id)
+      return
+    }
+    setSelectedPowerLineId(id)
+    setSelectedObjectId(null)
   }
 
   const handleFieldPointerMove = (x: number, y: number) => {
@@ -126,48 +145,58 @@ function App() {
 
   return (
     <div className="app">
-      <ObjectLibrary
-        selectedId={selectedItem?.id ?? null}
-        onSelect={handleSelect}
-        lineTypes={lineTypes}
-        selectedLineId={selectedLineId}
-        onSelectLine={handleSelectLine}
-        deleteMode={deleteMode}
-        onSelectDelete={handleSelectDelete}
-      />
-      <main className="app-map">
-        <GridWorkspace
-          onFieldClick={handleFieldClick}
-          onFieldPointerMove={handleFieldPointerMove}
-          onFieldPointerUp={handleFieldPointerUp}
-        >
-          {lines.map((line) => {
-            const from = objects.find((object) => object.id === line.fromId)
-            const to = objects.find((object) => object.id === line.toId)
-            if (!from || !to) return null
-            const color = lineTypes.find((type) => type.id === line.type)?.color ?? '#888'
-            return (
-              <PowerLine
-                key={line.id}
-                from={from}
-                to={to}
-                color={color}
-                isInteractive={deleteMode === 'line'}
-                onClick={() => handleDeleteLine(line.id)}
+      <div className="app-main">
+        <ObjectLibrary
+          selectedId={selectedItem?.id ?? null}
+          onSelect={handleSelect}
+          lineTypes={lineTypes}
+          selectedLineId={selectedLineId}
+          onSelectLine={handleSelectLine}
+          deleteMode={deleteMode}
+          onSelectDelete={handleSelectDelete}
+        />
+        <main className="app-map">
+          <GridWorkspace
+            onFieldClick={handleFieldClick}
+            onFieldPointerMove={handleFieldPointerMove}
+            onFieldPointerUp={handleFieldPointerUp}
+          >
+            {lines.map((line) => {
+              const from = objects.find((object) => object.id === line.fromId)
+              const to = objects.find((object) => object.id === line.toId)
+              if (!from || !to) return null
+              const color = lineTypes.find((type) => type.id === line.type)?.color ?? '#888'
+              return (
+                <PowerLine
+                  key={line.id}
+                  from={from}
+                  to={to}
+                  color={color}
+                  isInteractive={deleteMode === 'line' || isSelectMode}
+                  onClick={() => handlePowerLineClick(line.id)}
+                />
+              )
+            })}
+            {objects.map((object) => (
+              <MapObject
+                key={object.id}
+                object={object}
+                isSelected={object.id === selectedObjectId}
+                isInteractive={selectedItem === null && deleteMode !== 'line'}
+                onGrab={handleObjectGrab}
               />
-            )
-          })}
-          {objects.map((object) => (
-            <MapObject
-              key={object.id}
-              object={object}
-              isSelected={object.id === selectedObjectId}
-              isInteractive={selectedItem === null && deleteMode !== 'line'}
-              onGrab={handleObjectGrab}
-            />
-          ))}
-        </GridWorkspace>
-      </main>
+            ))}
+          </GridWorkspace>
+        </main>
+        <ObjectProperties
+          objects={objects}
+          lines={lines}
+          lineTypes={lineTypes}
+          selectedObjectId={selectedObjectId}
+          selectedPowerLineId={selectedPowerLineId}
+        />
+      </div>
+      <NetworkStats objects={objects} lines={lines} />
     </div>
   )
 }

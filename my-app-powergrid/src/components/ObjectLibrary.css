@@ -5,6 +5,7 @@
   width: 260px;
   flex-shrink: 0;
   height: 100%;
+  contain: size;
   box-sizing: border-box;
   padding: 12px;
   overflow-y: auto;

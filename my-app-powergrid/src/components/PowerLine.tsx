@@ -1,3 +1,4 @@
+import type { MouseEvent } from 'react'
 import type { MapObjectData } from './MapObject'
 
 export type PowerLineData = {
@@ -16,9 +17,14 @@ type PowerLineProps = {
 }
 
 function PowerLine({ from, to, color, isInteractive, onClick }: PowerLineProps) {
+  const handleClick = (event: MouseEvent<SVGGElement>) => {
+    event.stopPropagation()
+    onClick()
+  }
+
   return (
     <g
-      onClick={onClick}
+      onClick={handleClick}
       style={{
         pointerEvents: isInteractive ? 'auto' : 'none',
         cursor: isInteractive ? 'pointer' : 'default',

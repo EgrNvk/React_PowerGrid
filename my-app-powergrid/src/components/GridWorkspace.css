@@ -5,6 +5,7 @@
 }
 
 .workspace-scroll {
+  display: flex;
   width: 100%;
   height: 100%;
   overflow: auto;
@@ -13,6 +14,8 @@
 
 .workspace-scroll svg {
   display: block;
+  flex-shrink: 0;
+  margin: auto;
 }
 
 .workspace-zoom {

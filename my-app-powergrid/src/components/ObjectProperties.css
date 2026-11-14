@@ -1,0 +1,41 @@
+.object-properties {
+  width: 260px;
+  flex-shrink: 0;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 12px;
+  overflow-y: auto;
+  background: #f4f4f4;
+  border-left: 1px solid #ccc;
+  font-size: 14px;
+}
+
+.object-properties dl {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+}
+
+.object-properties dt {
+  font-size: 12px;
+  color: #666;
+}
+
+.object-properties dd {
+  margin: 2px 0 0;
+  overflow-wrap: anywhere;
+}
+
+.object-properties .empty {
+  margin: 0;
+  color: #666;
+}
+
+.object-properties .line-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding-left: 16px;
+}

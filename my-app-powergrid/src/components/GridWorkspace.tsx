@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { MouseEvent, PointerEvent, ReactNode } from 'react'
 import './GridWorkspace.css'
 
@@ -23,6 +23,24 @@ function GridWorkspace({
   children,
 }: GridWorkspaceProps) {
   const [zoom, setZoom] = useState(1)
+  const [fitScale, setFitScale] = useState(1)
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const element = scrollRef.current
+    if (!element) return
+    const updateFitScale = () => {
+      const scale = Math.min(
+        element.clientWidth / FIELD_WIDTH,
+        element.clientHeight / FIELD_HEIGHT,
+      )
+      setFitScale(Math.floor(scale * 1000 + 0.000001) / 1000)
+    }
+    updateFitScale()
+    const observer = new ResizeObserver(updateFitScale)
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [])
 
   const changeZoom = (next: number) => {
     const rounded = Math.round(next * 100) / 100
@@ -59,10 +77,10 @@ function GridWorkspace({
           −
         </button>
       </div>
-      <div className="workspace-scroll">
+      <div className="workspace-scroll" ref={scrollRef}>
         <svg
-          width={FIELD_WIDTH * zoom}
-          height={FIELD_HEIGHT * zoom}
+          width={FIELD_WIDTH * fitScale * zoom}
+          height={FIELD_HEIGHT * fitScale * zoom}
           viewBox={`0 0 ${FIELD_WIDTH} ${FIELD_HEIGHT}`}
           onClick={handleClick}
           onPointerMove={handlePointerMove}
