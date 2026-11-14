@@ -10,10 +10,15 @@ import tree from '../assets/icons/tree.png'
 import road from '../assets/icons/road.png'
 import water from '../assets/icons/water.webp'
 
-type LibraryItem = {
+export type LibraryItem = {
   id: string
   name: string
   icon: string
+}
+
+type ObjectLibraryProps = {
+  selectedId: string | null
+  onSelect: (item: LibraryItem) => void
 }
 
 const poleItems: LibraryItem[] = [
@@ -37,16 +42,20 @@ const otherItems: LibraryItem[] = [
   { id: 'water', name: 'Водойма', icon: water },
 ]
 
-const renderItem = (item: LibraryItem) => (
-  <li key={item.id} className="library-row">
-    <img src={item.icon} alt={item.name} />
-    <span>{item.name}</span>
-  </li>
-)
-
-function ObjectLibrary() {
+function ObjectLibrary({ selectedId, onSelect }: ObjectLibraryProps) {
   const [isPolesOpen, setIsPolesOpen] = useState(false)
   const [isBuildingsOpen, setIsBuildingsOpen] = useState(false)
+
+  const renderItem = (item: LibraryItem) => (
+    <li
+      key={item.id}
+      className={item.id === selectedId ? 'library-row selected' : 'library-row'}
+      onClick={() => onSelect(item)}
+    >
+      <img src={item.icon} alt={item.name} />
+      <span>{item.name}</span>
+    </li>
+  )
 
   return (
     <aside className="object-library">

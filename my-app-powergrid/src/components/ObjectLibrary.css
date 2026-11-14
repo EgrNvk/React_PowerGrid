@@ -54,3 +54,12 @@ button.library-row {
 .library-chevron {
   margin-left: auto;
 }
+
+li.library-row {
+  cursor: pointer;
+}
+
+.library-row.selected {
+  border-color: #2f6fed;
+  background: #e8f0ff;
+}
