@@ -9,8 +9,8 @@ import industrialBuilding from '../assets/icons/industrial-building.webp'
 import tree from '../assets/icons/tree.png'
 import road from '../assets/icons/road.png'
 import water from '../assets/icons/water.webp'
-import powerLine from '../assets/icons/Power Line.png'
-import deleteIcon from '../assets/icons/Delete.png'
+import powerLine from '../assets/icons/power-line.png'
+import deleteIcon from '../assets/icons/delete.png'
 
 export type LibraryItem = {
   id: string
