@@ -10,6 +10,7 @@ import tree from '../assets/icons/tree.png'
 import road from '../assets/icons/road.png'
 import water from '../assets/icons/water.webp'
 import powerLine from '../assets/icons/Power Line.png'
+import deleteIcon from '../assets/icons/Delete.png'
 
 export type LibraryItem = {
   id: string
@@ -23,12 +24,16 @@ export type LineType = {
   color: string
 }
 
+export type DeleteMode = 'object' | 'line'
+
 type ObjectLibraryProps = {
   selectedId: string | null
   onSelect: (item: LibraryItem) => void
   lineTypes: LineType[]
   selectedLineId: string | null
   onSelectLine: (id: string) => void
+  deleteMode: DeleteMode | null
+  onSelectDelete: (mode: DeleteMode) => void
 }
 
 const poleItems: LibraryItem[] = [
@@ -58,10 +63,13 @@ function ObjectLibrary({
   lineTypes,
   selectedLineId,
   onSelectLine,
+  deleteMode,
+  onSelectDelete,
 }: ObjectLibraryProps) {
   const [isPolesOpen, setIsPolesOpen] = useState(false)
   const [isBuildingsOpen, setIsBuildingsOpen] = useState(false)
   const [isLinesOpen, setIsLinesOpen] = useState(false)
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false)
 
   const renderItem = (item: LibraryItem) => (
     <li
@@ -107,6 +115,27 @@ function ObjectLibrary({
         <span className="library-chevron">{isLinesOpen ? '⌃' : '⌄'}</span>
       </button>
       {isLinesOpen && <ul className="library-sub">{lineTypes.map(renderLineType)}</ul>}
+      <button className="library-row" onClick={() => setIsDeleteOpen(!isDeleteOpen)}>
+        <img src={deleteIcon} alt="Видалити" />
+        <span>Видалити</span>
+        <span className="library-chevron">{isDeleteOpen ? '⌃' : '⌄'}</span>
+      </button>
+      {isDeleteOpen && (
+        <ul className="library-sub">
+          <li
+            className={deleteMode === 'object' ? 'library-row selected' : 'library-row'}
+            onClick={() => onSelectDelete('object')}
+          >
+            <span>Об'єкт</span>
+          </li>
+          <li
+            className={deleteMode === 'line' ? 'library-row selected' : 'library-row'}
+            onClick={() => onSelectDelete('line')}
+          >
+            <span>Лінія</span>
+          </li>
+        </ul>
+      )}
     </aside>
   )
 }
