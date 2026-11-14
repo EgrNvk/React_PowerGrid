@@ -63,3 +63,14 @@ li.library-row {
   border-color: #2f6fed;
   background: #e8f0ff;
 }
+
+.line-swatch {
+  width: 40px;
+  height: 6px;
+  flex-shrink: 0;
+  border-radius: 3px;
+}
+
+.line-swatch-group {
+  background: #888;
+}

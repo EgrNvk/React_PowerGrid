@@ -9,6 +9,7 @@ import industrialBuilding from '../assets/icons/industrial-building.png'
 import tree from '../assets/icons/tree.png'
 import road from '../assets/icons/road.png'
 import water from '../assets/icons/water.webp'
+import powerLine from '../assets/icons/Power Line.png'
 
 export type LibraryItem = {
   id: string
@@ -16,9 +17,18 @@ export type LibraryItem = {
   icon: string
 }
 
+export type LineType = {
+  id: string
+  name: string
+  color: string
+}
+
 type ObjectLibraryProps = {
   selectedId: string | null
   onSelect: (item: LibraryItem) => void
+  lineTypes: LineType[]
+  selectedLineId: string | null
+  onSelectLine: (id: string) => void
 }
 
 const poleItems: LibraryItem[] = [
@@ -42,9 +52,16 @@ const otherItems: LibraryItem[] = [
   { id: 'water', name: 'Водойма', icon: water },
 ]
 
-function ObjectLibrary({ selectedId, onSelect }: ObjectLibraryProps) {
+function ObjectLibrary({
+  selectedId,
+  onSelect,
+  lineTypes,
+  selectedLineId,
+  onSelectLine,
+}: ObjectLibraryProps) {
   const [isPolesOpen, setIsPolesOpen] = useState(false)
   const [isBuildingsOpen, setIsBuildingsOpen] = useState(false)
+  const [isLinesOpen, setIsLinesOpen] = useState(false)
 
   const renderItem = (item: LibraryItem) => (
     <li
@@ -54,6 +71,17 @@ function ObjectLibrary({ selectedId, onSelect }: ObjectLibraryProps) {
     >
       <img src={item.icon} alt={item.name} />
       <span>{item.name}</span>
+    </li>
+  )
+
+  const renderLineType = (lineType: LineType) => (
+    <li
+      key={lineType.id}
+      className={lineType.id === selectedLineId ? 'library-row selected' : 'library-row'}
+      onClick={() => onSelectLine(lineType.id)}
+    >
+      <span className="line-swatch" style={{ background: lineType.color }} />
+      <span>{lineType.name}</span>
     </li>
   )
 
@@ -73,6 +101,12 @@ function ObjectLibrary({ selectedId, onSelect }: ObjectLibraryProps) {
       </button>
       {isBuildingsOpen && <ul className="library-sub">{buildingItems.map(renderItem)}</ul>}
       <ul>{otherItems.map(renderItem)}</ul>
+      <button className="library-row" onClick={() => setIsLinesOpen(!isLinesOpen)}>
+        <img src={powerLine} alt="Лінія" />
+        <span>Лінія</span>
+        <span className="library-chevron">{isLinesOpen ? '⌃' : '⌄'}</span>
+      </button>
+      {isLinesOpen && <ul className="library-sub">{lineTypes.map(renderLineType)}</ul>}
     </aside>
   )
 }
