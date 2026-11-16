@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import GridWorkspace from './components/GridWorkspace'
 import MapObject from './components/MapObject'
 import type { MapObjectData } from './components/MapObject'
@@ -34,8 +34,16 @@ function App() {
   const [selectedObjectId, setSelectedObjectId] = useState<string | null>(null)
   const [selectedPowerLineId, setSelectedPowerLineId] = useState<string | null>(null)
   const [draggingId, setDraggingId] = useState<string | null>(null)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const errorTimer = useRef(0)
 
   const isSelectMode = selectedItem === null && selectedLineId === null && deleteMode === null
+
+  const showError = (text: string) => {
+    window.clearTimeout(errorTimer.current)
+    setErrorMessage(text)
+    errorTimer.current = window.setTimeout(() => setErrorMessage(null), 3000)
+  }
 
   const handleSelect = (item: LibraryItem) => {
     setSelectedItem(item.id === selectedItem?.id ? null : item)
@@ -81,7 +89,20 @@ function App() {
 
   const handleLineClick = (id: string, lineType: string) => {
     const target = objects.find((object) => object.id === id)
-    if (!target || !ALLOWED_LINE_TYPES[target.type]?.includes(lineType)) return
+    if (!target) return
+    const allowedTypes = ALLOWED_LINE_TYPES[target.type]
+    if (!allowedTypes) {
+      showError(`До об'єкта «${target.name}» лінії підключати не можна`)
+      return
+    }
+    if (!allowedTypes.includes(lineType)) {
+      const lineName = lineTypes.find((type) => type.id === lineType)?.name ?? lineType
+      const allowedNames = allowedTypes
+        .map((typeId) => lineTypes.find((type) => type.id === typeId)?.name ?? typeId)
+        .join(', ')
+      showError(`Лінія «${lineName}» не підходить для «${target.name}». Дозволено: ${allowedNames}`)
+      return
+    }
     if (!selectedObjectId) {
       setSelectedObjectId(id)
       return
@@ -163,6 +184,7 @@ function App() {
           onSelectDelete={handleSelectDelete}
         />
         <main className="app-map">
+          {errorMessage && <div className="app-error">{errorMessage}</div>}
           <GridWorkspace
             onFieldClick={handleFieldClick}
             onFieldPointerMove={handleFieldPointerMove}
