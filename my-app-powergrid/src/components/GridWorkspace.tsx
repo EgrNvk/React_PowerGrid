@@ -101,7 +101,7 @@ function GridWorkspace({
               />
             </pattern>
           </defs>
-          <rect width={FIELD_WIDTH} height={FIELD_HEIGHT} fill="#6a9b4f" />
+          <rect width={FIELD_WIDTH} height={FIELD_HEIGHT} fill="#99c086" />
           <rect width={FIELD_WIDTH} height={FIELD_HEIGHT} fill="url(#grid)" />
           {children}
         </svg>

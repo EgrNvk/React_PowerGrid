@@ -4,6 +4,7 @@ import type { LineType } from './ObjectLibrary'
 import type { PowerLineData } from './PowerLine'
 
 const POLE_TYPES = ['wooden-pole', 'concrete-pole', 'metal-pole']
+const CONNECTABLE_TYPES = [...POLE_TYPES, 'transformer', 'house', 'industrial-building']
 const CELL_SIZE = 50
 const METERS_PER_CELL = 10
 
@@ -66,70 +67,67 @@ function ObjectProperties({
   }
 
   if (object) {
-    if (POLE_TYPES.includes(object.type)) {
-      const connectedLines = lines.filter(
-        (item) => item.fromId === object.id || item.toId === object.id,
-      )
-      return (
-        <aside className="object-properties">
-          <dl>
-            <div>
-              <dt>ID</dt>
-              <dd>{object.id}</dd>
-            </div>
-            <div>
-              <dt>Тип опори</dt>
-              <dd>{object.name}</dd>
-            </div>
-            <div>
-              <dt>Координати</dt>
-              <dd>
-                ({object.x}, {object.y})
-              </dd>
-            </div>
-            <div>
-              <dt>Підключених ліній</dt>
-              <dd>{connectedLines.length}</dd>
-            </div>
-            {connectedLines.length > 0 && (
-              <div>
-                <dt>Підключені лінії</dt>
-                <dd>
-                  <ul className="line-list">
-                    {connectedLines.map((item) => (
-                      <li key={item.id}>
-                        {lineTypes.find((type) => type.id === item.type)?.name ?? item.type},{' '}
-                        {item.id}
-                      </li>
-                    ))}
-                  </ul>
-                </dd>
-              </div>
-            )}
-          </dl>
-        </aside>
-      )
-    }
-
+    const isPole = POLE_TYPES.includes(object.type)
+    const canConnect = CONNECTABLE_TYPES.includes(object.type)
+    const connectedLines = lines.filter(
+      (item) => item.fromId === object.id || item.toId === object.id,
+    )
     const groupName =
       object.type === 'transformer' ? 'Електрична інфраструктура' : "Об'єкт місцевості"
+
     return (
       <aside className="object-properties">
         <dl>
-          <div>
-            <dt>Назва</dt>
-            <dd>{object.name}</dd>
-          </div>
-          <div>
-            <dt>Тип</dt>
-            <dd>{groupName}</dd>
-          </div>
+          {isPole ? (
+            <>
+              <div>
+                <dt>ID</dt>
+                <dd>{object.id}</dd>
+              </div>
+              <div>
+                <dt>Тип опори</dt>
+                <dd>{object.name}</dd>
+              </div>
+            </>
+          ) : (
+            <>
+              <div>
+                <dt>Назва</dt>
+                <dd>{object.name}</dd>
+              </div>
+              <div>
+                <dt>Тип</dt>
+                <dd>{groupName}</dd>
+              </div>
+            </>
+          )}
           <div>
             <dt>Координати</dt>
             <dd>
               ({object.x}, {object.y})
             </dd>
           </div>
+          {canConnect && (
+            <div>
+              <dt>Підключених ліній</dt>
+              <dd>{connectedLines.length}</dd>
+            </div>
+          )}
+          {canConnect && connectedLines.length > 0 && (
+            <div>
+              <dt>Підключені лінії</dt>
+              <dd>
+                <ul className="line-list">
+                  {connectedLines.map((item) => (
+                    <li key={item.id}>
+                      {lineTypes.find((type) => type.id === item.type)?.name ?? item.type},{' '}
+                      {item.id}
+                    </li>
+                  ))}
+                </ul>
+              </dd>
+            </div>
+          )}
         </dl>
       </aside>
     )

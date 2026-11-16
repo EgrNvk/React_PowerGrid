@@ -1,6 +1,6 @@
 import type { MouseEvent, PointerEvent } from 'react'
 
-const OBJECT_SIZE = 50
+const OBJECT_SIZE = 80
 
 export type MapObjectData = {
   id: string

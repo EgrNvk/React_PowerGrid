@@ -46,8 +46,8 @@ button.library-row {
 }
 
 .library-row img {
-  width: 40px;
-  height: 40px;
+  width: 25px;
+  height: 25px;
   flex-shrink: 0;
   object-fit: contain;
 }
@@ -66,8 +66,8 @@ li.library-row {
 }
 
 .line-swatch {
-  width: 40px;
-  height: 6px;
+  width: 25px;
+  height: 5px;
   flex-shrink: 0;
   border-radius: 3px;
 }

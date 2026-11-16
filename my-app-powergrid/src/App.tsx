@@ -16,7 +16,14 @@ const lineTypes: LineType[] = [
   { id: 'high-voltage', name: 'Високовольтна', color: '#2f80ed' },
 ]
 
-const ELECTRICAL_TYPES = ['wooden-pole', 'concrete-pole', 'metal-pole', 'transformer']
+const ALLOWED_LINE_TYPES: Record<string, string[]> = {
+  'wooden-pole': ['low-voltage'],
+  'concrete-pole': ['medium-voltage'],
+  'metal-pole': ['high-voltage'],
+  transformer: ['low-voltage', 'medium-voltage', 'high-voltage'],
+  house: ['low-voltage'],
+  'industrial-building': ['medium-voltage'],
+}
 
 function App() {
   const [selectedItem, setSelectedItem] = useState<LibraryItem | null>(null)
@@ -69,12 +76,12 @@ function App() {
       icon: selectedItem.icon,
     }
     setObjects([...objects, newObject])
-    setSelectedItem(null)
+    //setSelectedItem(null)
   }
 
   const handleLineClick = (id: string, lineType: string) => {
     const target = objects.find((object) => object.id === id)
-    if (!target || !ELECTRICAL_TYPES.includes(target.type)) return
+    if (!target || !ALLOWED_LINE_TYPES[target.type]?.includes(lineType)) return
     if (!selectedObjectId) {
       setSelectedObjectId(id)
       return
